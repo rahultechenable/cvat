@@ -8,7 +8,7 @@ import Layout from 'antd/lib/layout';
 import { Row } from 'antd/lib/grid';
 import Title from 'antd/lib/typography/Title';
 import { CheckCircleFilled } from '@ant-design/icons';
-import CVATLogo from 'components/common/cvat-logo';
+import CVATLogo, { BrandFullLogo } from 'components/common/cvat-logo';
 import { BRAND_FULL_NAME } from 'branding';
 
 interface SignInLayoutComponentProps {
@@ -61,7 +61,7 @@ function SignInLayout(props: SignInLayoutComponentProps): JSX.Element {
     return (
         <Layout className='cvat-signing-layout cvat-brand-signing-layout'>
             <div className='cvat-brand-signing-panel'>
-                <CVATLogo tone='dark' />
+                <BrandFullLogo height={72} />
                 <div className='cvat-brand-signing-panel-body'>
                     <Title className='cvat-brand-signing-headline'>
                         Label your data faster with AI-assisted annotation

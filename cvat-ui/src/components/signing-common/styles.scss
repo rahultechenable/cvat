@@ -356,11 +356,14 @@ $input-transition: all 0.3s ease;
         flex-direction: column;
         justify-content: space-between;
         padding: $grid-unit-size * 6;
-        color: white;
+        color: $text-color;
+        border-right: 1px solid $brand-border;
         background:
-            radial-gradient(circle at 15% 10%, rgb(255 255 255 / 14%) 0, transparent 40%),
-            radial-gradient(circle at 90% 85%, rgb(56 189 248 / 30%) 0, transparent 45%),
-            linear-gradient(150deg, #5b21b6 0%, #7c3aed 55%, #6d28d9 100%);
+            radial-gradient(circle at 12% 18%, rgb(168 85 247 / 16%) 0, transparent 38%),
+            radial-gradient(circle at 88% 30%, rgb(250 204 21 / 16%) 0, transparent 34%),
+            radial-gradient(circle at 80% 88%, rgb(249 115 22 / 13%) 0, transparent 38%),
+            radial-gradient(circle at 18% 85%, rgb(59 130 246 / 14%) 0, transparent 40%),
+            #faf9ff;
 
         @media (max-width: 991px) {
             display: none;
@@ -368,7 +371,7 @@ $input-transition: all 0.3s ease;
     }
 
     .cvat-brand-signing-headline.ant-typography {
-        color: white;
+        color: $text-color;
         font-size: 40px;
         line-height: 1.15;
         font-weight: 700;
@@ -389,18 +392,23 @@ $input-transition: all 0.3s ease;
             display: flex;
             gap: $grid-unit-size * 1.5;
             align-items: flex-start;
-            color: rgb(255 255 255 / 92%);
+            color: #374151;
         }
 
         .anticon {
             margin-top: 3px;
-            color: #c4b5fd;
+            color: $brand-primary;
         }
     }
 
     .cvat-brand-signing-panel-footer {
         font-size: 13px;
-        color: rgb(255 255 255 / 70%);
+        color: $text-color-secondary;
+    }
+
+    .cvat-brand-full-logo {
+        align-self: flex-start;
+        width: auto;
     }
 
     .cvat-brand-signing-content {

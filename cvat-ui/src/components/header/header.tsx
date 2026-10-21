@@ -39,7 +39,7 @@ import Text from 'antd/lib/typography/Text';
 import { BRAND_FULL_NAME } from 'branding';
 
 import { Organization } from 'cvat-core-wrapper';
-import CVATLogo from 'components/common/cvat-logo';
+import CVATLogo, { BrandFullLogo } from 'components/common/cvat-logo';
 import { switchSettingsModalVisible as switchSettingsModalVisibleAction } from 'actions/settings-actions';
 import { logoutAsync } from 'actions/auth-actions';
 import { shortcutsActions, registerComponentShortcuts } from 'actions/shortcuts-actions';
@@ -215,8 +215,10 @@ function HeaderComponent(props: Props): JSX.Element {
     const showAboutModal = useCallback((): void => {
         Modal.info({
             title: BRAND_FULL_NAME,
+            icon: null,
             content: (
                 <div>
+                    <p><BrandFullLogo height={72} /></p>
                     <p>{`${about.server.description}`}</p>
                     <p>
                         <Text type='secondary'>
