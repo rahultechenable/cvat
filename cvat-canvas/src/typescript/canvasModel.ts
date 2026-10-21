@@ -57,6 +57,15 @@ export interface ActiveElement {
     attributeID: number | null;
 }
 
+// A proposed box drawn over the image (e.g. by Box Assist). It isn't an object, so it is never saved
+export interface CanvasSuggestion {
+    id: number;
+    points: number[]; // [x1, y1, x2, y2] in image coordinates
+    color: string;
+    text: string;
+    selected: boolean;
+}
+
 export enum HighlightSeverity {
     ERROR = 'error',
     WARNING = 'warning',
@@ -235,6 +244,7 @@ export enum UpdateReasons {
     GRID_UPDATED = 'grid_updated',
 
     ISSUE_REGIONS_UPDATED = 'issue_regions_updated',
+    SUGGESTIONS_UPDATED = 'suggestions_updated',
     OBJECTS_UPDATED = 'objects_updated',
     SHAPE_ACTIVATED = 'shape_activated',
     SHAPE_FOCUSED = 'shape_focused',
@@ -286,6 +296,7 @@ export interface CanvasModel {
     readonly imageIsDeleted: boolean;
     readonly image: Image | null;
     readonly issueRegions: Record<number, { hidden: boolean; points: number[] }>;
+    readonly suggestions: CanvasSuggestion[];
     readonly objects: any[];
     readonly renderData: RenderData;
     readonly gridSize: Size;
@@ -313,6 +324,7 @@ export interface CanvasModel {
 
     setup(frameData: any, objectStates: any[], renderData?: RenderData): void;
     setupIssueRegions(issueRegions: Record<number, { hidden: boolean; points: number[] }>): void;
+    setupSuggestions(suggestions: CanvasSuggestion[]): void;
     activate(clientID: number | null, attributeID: number | null): void;
     highlight(clientIDs: number[], severity: HighlightSeverity): void;
     rotate(rotationAngle: number): void;
@@ -415,6 +427,7 @@ export class CanvasModelImpl extends MasterImpl implements CanvasModel {
         objects: any[];
         renderData: RenderData;
         issueRegions: Record<number, { hidden: boolean; points: number[] }>;
+        suggestions: CanvasSuggestion[];
         scale: number;
         top: number;
         left: number;
@@ -500,6 +513,7 @@ export class CanvasModelImpl extends MasterImpl implements CanvasModel {
                 visibleSkeletonElements: {},
             },
             issueRegions: {},
+            suggestions: [],
             scale: 1,
             top: 0,
             left: 0,
@@ -563,6 +577,7 @@ export class CanvasModelImpl extends MasterImpl implements CanvasModel {
         this.notify(UpdateReasons.FITTED_CANVAS);
         this.notify(UpdateReasons.OBJECTS_UPDATED);
         this.notify(UpdateReasons.ISSUE_REGIONS_UPDATED);
+        this.notify(UpdateReasons.SUGGESTIONS_UPDATED);
     }
 
     public bitmap(enabled: boolean): void {
@@ -706,6 +721,11 @@ export class CanvasModelImpl extends MasterImpl implements CanvasModel {
     public setupIssueRegions(issueRegions: Record<number, { hidden: boolean; points: number[] }>): void {
         this.data.issueRegions = issueRegions;
         this.notify(UpdateReasons.ISSUE_REGIONS_UPDATED);
+    }
+
+    public setupSuggestions(suggestions: CanvasSuggestion[]): void {
+        this.data.suggestions = suggestions;
+        this.notify(UpdateReasons.SUGGESTIONS_UPDATED);
     }
 
     public activate(clientID: number | null, attributeID: number | null): void {
@@ -1186,6 +1206,10 @@ export class CanvasModelImpl extends MasterImpl implements CanvasModel {
 
     public get issueRegions(): Record<number, { hidden: boolean; points: number[] }> {
         return { ...this.data.issueRegions };
+    }
+
+    public get suggestions(): CanvasSuggestion[] {
+        return [...this.data.suggestions];
     }
 
     public get objects(): any[] {

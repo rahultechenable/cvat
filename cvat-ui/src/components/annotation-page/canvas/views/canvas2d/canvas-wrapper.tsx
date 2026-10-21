@@ -30,6 +30,7 @@ import getHiddenZLayers from 'utils/get-hidden-z-layers';
 import config from 'config';
 import CVATTooltip from 'components/common/cvat-tooltip';
 import FrameTags from 'components/annotation-page/tag-annotation-workspace/frame-tags';
+import BoxAssistOverlay from 'components/annotation-page/standard-workspace/box-assist/box-assist-overlay';
 import { LayerStackIcon } from 'icons';
 import {
     confirmCanvasReadyAsync,
@@ -1359,6 +1360,7 @@ class CanvasWrapperComponent extends React.PureComponent<Props> {
             <>
                 <GlobalHotKeys keyMap={subKeyMap(componentShortcuts, keyMap)} handlers={handlers} />
                 <CanvasTipsComponent ref={this.canvasTipsRef} />
+                <BoxAssistOverlay />
                 {
                     !canvasIsReady && (
                         <div className='cvat-spinner-container'>

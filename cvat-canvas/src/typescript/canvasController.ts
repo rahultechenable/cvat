@@ -23,12 +23,14 @@ import {
     HighlightedElements,
     PolyEditData,
     RenderData,
+    CanvasSuggestion,
 } from './canvasModel';
 
 export interface CanvasController {
     readonly objects: any[];
     readonly renderData: RenderData;
     readonly issueRegions: Record<number, { hidden: boolean; points: number[] }>;
+    readonly suggestions: CanvasSuggestion[];
     readonly focusData: FocusData;
     readonly activeElement: ActiveElement;
     readonly highlightedElements: HighlightedElements;
@@ -125,6 +127,10 @@ export class CanvasControllerImpl implements CanvasController {
 
     public get issueRegions(): Record<number, { hidden: boolean; points: number[] }> {
         return this.model.issueRegions;
+    }
+
+    public get suggestions(): CanvasSuggestion[] {
+        return this.model.suggestions;
     }
 
     public get objects(): any[] {

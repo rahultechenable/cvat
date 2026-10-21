@@ -188,6 +188,27 @@ circle.cvat_canvas_issue_region {
     opacity: 1 !important;
 }
 
+.cvat_canvas_suggestion {
+    fill-opacity: 0.06;
+    cursor: pointer;
+
+    &:hover {
+        fill-opacity: 0.2;
+    }
+}
+
+.cvat_canvas_suggestion_selected {
+    fill-opacity: 0.25;
+}
+
+.cvat_canvas_suggestion_text {
+    pointer-events: none;
+    font-weight: 600;
+    paint-order: stroke;
+    stroke: rgb(0 0 0 / 60%);
+    stroke-width: 0.15em;
+}
+
 polyline.cvat_canvas_shape_selection {
     @extend .cvat_shape_action_dasharray;
     @extend .cvat_shape_action_opacity;

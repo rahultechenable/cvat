@@ -1,0 +1,25 @@
+#
+# Box Assist: the inference service that suggests boxes in the annotation view.
+# See components/box_assist/README.md. Add this file to COMPOSE_FILE, e.g.
+#   docker compose -f docker-compose.yml -f docker-compose.box_assist.yml up -d
+# and put model files (*.pt, *.onnx) in components/box_assist/models
+# (or set CVAT_BOX_ASSIST_MODELS_DIR to another host directory).
+#
+# For GPU inference, also add docker-compose.box_assist.gpu.yml.
+#
+
+services:
+  cvat_box_assist:
+    container_name: cvat_box_assist
+    image: cvat/box_assist:${CVAT_VERSION:-dev}
+    build:
+      context: components/box_assist
+    restart: always
+    volumes:
+      - ${CVAT_BOX_ASSIST_MODELS_DIR:-./components/box_assist/models}:/models:ro
+    networks:
+      - cvat
+
+  cvat_server:
+    environment:
+      CVAT_BOX_ASSIST_URL: http://cvat_box_assist:8765

@@ -12,7 +12,7 @@ import {
     CuboidDrawingMethod, Configuration, Geometry, Mode,
     HighlightSeverity as _HighlightSeverity, CanvasHint as _CanvasHint,
     CanvasHistorySource,
-    PolyEditData, RenderData as _RenderData,
+    PolyEditData, RenderData as _RenderData, CanvasSuggestion as _CanvasSuggestion,
 } from './canvasModel';
 import { Master } from './master';
 import { CanvasController, CanvasControllerImpl } from './canvasController';
@@ -25,6 +25,7 @@ interface Canvas {
     html(): HTMLDivElement;
     setup(frameData: any, objectStates: any[], renderData?: RenderData): void;
     setupIssueRegions(issueRegions: Record<number, { hidden: boolean; points: number[] }>): void;
+    setupSuggestions(suggestions: CanvasSuggestion[]): void;
     translateFromSVG(points: number[]): number[];
     setupConflictRegions(clientID: number): number[];
     activate(clientID: number | null, attributeID?: number): void;
@@ -84,6 +85,10 @@ class CanvasImpl implements Canvas {
 
     public setupIssueRegions(issueRegions: Record<number, { hidden: boolean; points: number[] }>): void {
         this.model.setupIssueRegions(issueRegions);
+    }
+
+    public setupSuggestions(suggestions: CanvasSuggestion[]): void {
+        this.model.setupSuggestions(suggestions);
     }
 
     public translateFromSVG(points: number[]): number[] {
@@ -220,6 +225,7 @@ export type CanvasHint = _CanvasHint;
 export type InteractionResult = _InteractionResult;
 export type HighlightSeverity = _HighlightSeverity;
 export type RenderData = _RenderData;
+export type CanvasSuggestion = _CanvasSuggestion;
 
 export {
     CanvasImpl as Canvas, RectDrawingMethod, CuboidDrawingMethod, Mode as CanvasMode, CanvasHistorySource,

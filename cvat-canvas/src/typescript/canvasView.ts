@@ -43,7 +43,7 @@ import {
     DrawData, MergeData, SplitData, Mode, Size, Configuration,
     InteractionResult, InteractionData, ColorBy, HighlightedElements,
     HighlightSeverity, GroupData, SelectData, JoinData, CanvasHint,
-    MultiSelectModifier, CanvasHistorySource,
+    MultiSelectModifier, CanvasHistorySource, CanvasSuggestion,
 } from './canvasModel';
 
 const SELECTED_OBJECTS_BOX_PADDING = 6;
@@ -79,6 +79,7 @@ export class CanvasViewImpl implements CanvasView, Listener {
     private issueRegionPattern_2: SVG.Pattern;
     private drawnStates: Record<number, DrawnState>;
     private drawnIssueRegions: Record<number, SVG.Shape>;
+    private drawnSuggestions: SVG.G | null;
     private geometry: Geometry;
     private drawHandler: DrawHandler;
     private masksHandler: MasksHandler;
@@ -929,6 +930,8 @@ export class CanvasViewImpl implements CanvasView, Listener {
             );
         }
 
+        this.setupSuggestions(this.controller.suggestions);
+
         // Transform patterns
         for (const pattern of [this.issueRegionPattern_1, this.issueRegionPattern_2]) {
             pattern.attr({
@@ -1022,6 +1025,67 @@ export class CanvasViewImpl implements CanvasView, Listener {
                 this.drawnIssueRegions[+issueRegion].style({ display: 'none' });
             }
         }
+    }
+
+    private setupSuggestions(suggestions: CanvasSuggestion[]): void {
+        if (this.drawnSuggestions) {
+            this.drawnSuggestions.remove();
+            this.drawnSuggestions = null;
+        }
+
+        if (!suggestions.length) {
+            return;
+        }
+
+        const { scale } = this.geometry;
+        const group = this.adoptedContent.group().addClass('cvat_canvas_suggestions');
+        for (const suggestion of suggestions) {
+            const [x1, y1, x2, y2] = this.translateToCanvas(suggestion.points);
+            const strokeWidth = (consts.BASE_STROKE_WIDTH * (suggestion.selected ? 2 : 1.2)) / scale;
+            const rect = group
+                .rect(Math.max(x2 - x1, 1), Math.max(y2 - y1, 1))
+                .move(x1, y1)
+                .addClass('cvat_canvas_suggestion')
+                .attr({
+                    id: `cvat_canvas_suggestion_${suggestion.id}`,
+                    stroke: suggestion.color,
+                    fill: suggestion.color,
+                    'stroke-width': strokeWidth,
+                    'stroke-dasharray': `${6 / scale},${4 / scale}`,
+                });
+
+            if (suggestion.selected) {
+                rect.addClass('cvat_canvas_suggestion_selected');
+            }
+
+            rect.on('mousedown', (event: MouseEvent): void => {
+                if (this.mode !== Mode.IDLE || event.button !== 0) {
+                    return;
+                }
+
+                // do not let the canvas handle the click (e.g. deactivate the current object)
+                event.stopPropagation();
+                this.canvas.dispatchEvent(
+                    new CustomEvent('canvas.suggestionclicked', {
+                        bubbles: false,
+                        cancelable: true,
+                        detail: { id: suggestion.id },
+                    }),
+                );
+            });
+
+            if (suggestion.text) {
+                const fontSize = 12 / scale;
+                group
+                    .plain(suggestion.text)
+                    .addClass('cvat_canvas_suggestion_text')
+                    .font({ size: fontSize })
+                    .attr({ fill: suggestion.color, x: x1, y: y1 - fontSize / 3 });
+            }
+        }
+
+        group.front();
+        this.drawnSuggestions = group;
     }
 
     private getVisibleSkeletonElements(clientID: number): number[] | null {
@@ -2191,6 +2255,7 @@ export class CanvasViewImpl implements CanvasView, Listener {
         this.svgTexts = {};
         this.drawnStates = {};
         this.drawnIssueRegions = {};
+        this.drawnSuggestions = null;
         this.activeElement = {
             clientID: null,
             attributeID: null,
@@ -2646,6 +2711,7 @@ export class CanvasViewImpl implements CanvasView, Listener {
             // Canvas geometry is going to be changed. Old object positions aren't valid any more
             this.setupObjects([]);
             this.setupIssueRegions({});
+            this.setupSuggestions([]);
             this.moveCanvas();
             this.resizeCanvas();
             this.canvas.dispatchEvent(
@@ -2673,6 +2739,8 @@ export class CanvasViewImpl implements CanvasView, Listener {
         } else if (reason === UpdateReasons.OBJECTS_UPDATED) {
             if (this.mode !== Mode.SELECT) this.objectSelector.resetSelected();
             this.setupObjects(this.controller.objects);
+            // keep suggestions above the redrawn objects, so they stay clickable
+            this.drawnSuggestions?.front();
             if (this.mode === Mode.SELECT) {
                 const states = this.controller.objects.filter((state: any): boolean => (
                     this.selectedObjects.includes(state.clientID)
@@ -2691,6 +2759,8 @@ export class CanvasViewImpl implements CanvasView, Listener {
             this.canvas.dispatchEvent(event);
         } else if (reason === UpdateReasons.ISSUE_REGIONS_UPDATED) {
             this.setupIssueRegions(this.controller.issueRegions);
+        } else if (reason === UpdateReasons.SUGGESTIONS_UPDATED) {
+            this.setupSuggestions(this.controller.suggestions);
         } else if (reason === UpdateReasons.GRID_UPDATED) {
             const size: Size = this.geometry.grid;
             this.gridPattern.setAttribute('width', `${size.width}`);

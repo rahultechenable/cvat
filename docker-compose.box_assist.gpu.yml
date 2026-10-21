@@ -1,0 +1,16 @@
+#
+# Runs Box Assist on the first NVIDIA GPU (needs the NVIDIA Container Toolkit on the host).
+# Use together with docker-compose.box_assist.yml.
+#
+
+services:
+  cvat_box_assist:
+    environment:
+      BOX_ASSIST_DEVICE: '0'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

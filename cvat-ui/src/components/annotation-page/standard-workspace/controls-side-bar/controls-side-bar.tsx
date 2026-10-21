@@ -29,6 +29,7 @@ import ResizeControl, { Props as ResizeControlProps } from './resize-control';
 import ToolsControl from './tools-control';
 import OpenCVControl from './opencv-control';
 import SnapToolsControl from './snap-tools-control';
+import BoxAssistControl from '../box-assist/box-assist-control';
 import DrawRectangleControl, { Props as DrawRectangleControlProps } from './draw-rectangle-control';
 import DrawPolygonControl, { Props as DrawPolygonControlProps } from './draw-polygon-control';
 import DrawPolylineControl, { Props as DrawPolylineControlProps } from './draw-polyline-control';
@@ -142,6 +143,7 @@ const ObservedResizeControl = ControlVisibilityObserver<ResizeControlProps>(Resi
 const ObservedToolsControl = ControlVisibilityObserver(ToolsControl, 'ToolsControl');
 const ObservedOpenCVControl = ControlVisibilityObserver(OpenCVControl, 'OpenCVControl');
 const ObservedSnapToolsControl = ControlVisibilityObserver(SnapToolsControl, 'SnapToolsControl');
+const ObservedBoxAssistControl = ControlVisibilityObserver(BoxAssistControl, 'BoxAssistControl');
 const ObservedDrawRectangleControl = ControlVisibilityObserver<DrawRectangleControlProps>(DrawRectangleControl, 'DrawRectangleControl');
 const ObservedDrawPolygonControl = ControlVisibilityObserver<DrawPolygonControlProps>(DrawPolygonControl, 'DrawPolygonControl');
 const ObservedDrawPolylineControl = ControlVisibilityObserver<DrawPolylineControlProps>(DrawPolylineControl, 'DrawPolylineControl');
@@ -439,6 +441,7 @@ export default function ControlsSideBarComponent(props: Props): JSX.Element {
                 <hr />
 
                 <ObservedToolsControl />
+                {rectangleControlVisible && <ObservedBoxAssistControl />}
                 <ObservedOpenCVControl />
                 {
                     rectangleControlVisible && (
