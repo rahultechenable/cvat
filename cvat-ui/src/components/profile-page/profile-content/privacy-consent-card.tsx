@@ -34,7 +34,7 @@ function PrivacyConsentCard(): JSX.Element {
                 <div className='cvat-profile-privacy-consent-item-copy'>
                     <div className='cvat-profile-privacy-consent-item-title'>Allow promotional notifications</div>
                     <div className='cvat-profile-privacy-consent-item-description'>
-                        Occasional product and community updates from CVAT.
+                        Occasional product updates.
                     </div>
                 </div>
             </div>

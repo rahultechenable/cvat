@@ -50,7 +50,7 @@ interface Props {
 const componentShortcuts: Record<string, KeyMapItem> = {
     PASTE_SHAPE: {
         name: 'Paste shape',
-        description: 'Paste a shape from internal CVAT clipboard',
+        description: 'Paste a shape from the internal clipboard',
         sequences: ['ctrl+v', 'command+v'],
         scope: ShortcutScope.OBJECTS_SIDEBAR,
     },

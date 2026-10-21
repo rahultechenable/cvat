@@ -15,6 +15,7 @@ import { updateHistoryFromQuery } from 'components/resource-sorting-filtering';
 import { anySearch } from 'utils/any-search';
 import { useResourceQuery } from 'utils/hooks';
 import { selectionActions } from 'actions/selection-actions';
+import PageTitle from 'components/common/page-title';
 import EmptyListComponent from './empty-list';
 import TopBarComponent from './top-bar';
 import ProjectListComponent from './project-list';
@@ -71,6 +72,7 @@ export default function ProjectsPageComponent(): JSX.Element {
 
     return (
         <div className='cvat-projects-page'>
+            <PageTitle title='Projects' subtitle='Group tasks that share the same labels' />
             <TopBarComponent
                 onApplySearch={(search: string | null) => {
                     dispatch(

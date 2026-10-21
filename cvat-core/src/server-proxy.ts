@@ -215,7 +215,7 @@ function generateHealthCheckError(errorData: AxiosError<unknown>): ServerError |
     }
 
     const message = [
-        'Server health check failed. CVAT cannot start while required services report errors:',
+        'Server health check failed. The application cannot start while required services report errors:',
         ...failedChecks.map(([checkName, checkStatus]) => `${checkName} - ${checkStatus}`),
     ].join('\n');
 
@@ -279,12 +279,12 @@ function generateError(errorData: AxiosError): ServerError {
     }
 
     if (errorData.code === 'ECONNABORTED' || errorData.message.toLowerCase().includes('timeout')) {
-        return new ServerError('The request timed out. The CVAT server did not respond in time.', 0, errorData.code);
+        return new ServerError('The request timed out. The server did not respond in time.', 0, errorData.code);
     }
 
     // Server is unavailable (no any response)
     const message = errorData.message === 'Network Error' ?
-        'Network error. The CVAT server is not reachable.' : `${errorData.message}.`;
+        'Network error. The server is not reachable.' : `${errorData.message}.`;
     return new ServerError(message, 0, errorData.code);
 }
 
@@ -1339,7 +1339,7 @@ async function createTask(
     onUpdate({
         status: RQStatus.UNKNOWN,
         progress: 0,
-        message: 'CVAT is creating your task',
+        message: 'Creating your task',
     });
 
     try {
@@ -1353,7 +1353,7 @@ async function createTask(
     onUpdate({
         status: RQStatus.UNKNOWN,
         progress: 0,
-        message: 'CVAT is uploading task data to the server',
+        message: 'Uploading task data to the server',
     });
 
     async function bulkUpload(taskId, files) {
@@ -1377,7 +1377,7 @@ async function createTask(
             onUpdate({
                 status: RQStatus.UNKNOWN,
                 progress: percentage,
-                message: 'CVAT is uploading task data to the server',
+                message: 'Uploading task data to the server',
             });
             await Axios.post(`${backendAPI}/tasks/${taskId}/data`, taskData, {
                 ...params,
@@ -1405,7 +1405,7 @@ async function createTask(
                 onUpdate({
                     status: RQStatus.UNKNOWN,
                     progress: percentage,
-                    message: 'CVAT is uploading task data to the server',
+                    message: 'Uploading task data to the server',
                 });
             },
             chunkSize,

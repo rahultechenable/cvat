@@ -1,0 +1,198 @@
+// Copyright (C) CVAT.ai Corporation
+//
+// SPDX-License-Identifier: MIT
+
+// App-wide look: layout with the left sidebar, typography and surfaces.
+// Loaded after styles.scss, so these rules take precedence over the defaults.
+
+@import './base';
+
+html,
+body {
+    font-family: $brand-font;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: $background-color-2;
+    color: $text-color;
+}
+
+.ant-layout.cvat-app-layout {
+    height: 100vh;
+    background: $background-color-2;
+
+    > .cvat-app-content {
+        position: relative;
+        height: 100vh;
+        min-width: 0;
+        overflow: auto;
+    }
+}
+
+.ant-notification {
+    top: $grid-unit-size * 2 !important;
+}
+
+hr {
+    border-top-color: $brand-border;
+}
+
+// list pages (projects, tasks, jobs, cloud storages, requests)
+.cvat-projects-page,
+.cvat-tasks-page,
+.cvat-jobs-page,
+.cvat-cloud-storages-page,
+.cvat-requests-page,
+.cvat-models-page {
+    padding-top: $grid-unit-size * 3;
+}
+
+.cvat-brand-page-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: $text-color;
+    margin: 0 0 $grid-unit-size * 2;
+}
+
+// cards and list items
+.ant-card {
+    border-color: $brand-border;
+    box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
+    transition: box-shadow 0.15s, border-color 0.15s;
+
+    &.ant-card-hoverable:hover {
+        border-color: #d9ccfb;
+        box-shadow: 0 4px 16px rgb(16 24 40 / 8%);
+    }
+}
+
+.ant-btn-primary {
+    box-shadow: none;
+}
+
+.ant-input-search .ant-input-group-addon .ant-btn {
+    box-shadow: none;
+}
+
+.ant-pagination .ant-pagination-item-active {
+    border-color: $brand-primary;
+    background: $brand-primary-light;
+}
+
+.ant-modal .ant-modal-content {
+    border-radius: 16px;
+}
+
+.ant-tag {
+    border-radius: 6px;
+}
+
+.cvat-brand-page-title-wrapper {
+    flex: none;
+
+    .cvat-brand-page-title {
+        margin-bottom: 2px;
+    }
+
+    .cvat-brand-page-subtitle {
+        display: block;
+        margin-bottom: $grid-unit-size * 2;
+    }
+}
+
+// task rows
+.cvat-tasks-list-item {
+    border-color: $brand-border;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
+    align-items: center;
+    padding-top: 0;
+
+    &:hover {
+        border-color: #d9ccfb;
+        box-shadow: 0 4px 16px rgb(16 24 40 / 8%);
+    }
+
+    .cvat-task-item-preview-wrapper {
+        margin: 0 $grid-unit-size * 2;
+        border-radius: 8px;
+
+        > .cvat-task-item-preview {
+            border-radius: 8px;
+            object-fit: cover;
+            width: 120px;
+            height: 80px;
+            max-width: none;
+        }
+    }
+
+    .cvat-item-task-name {
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .cvat-item-open-task-actions {
+        margin-top: 0;
+    }
+}
+
+.cvat-task-progress .ant-progress-bg,
+.cvat-task-progress .ant-progress-success-bg {
+    border-radius: 99px;
+}
+
+// annotation view
+.ant-layout-header.cvat-annotation-header {
+    background-color: $brand-surface;
+    border-bottom: 1px solid $brand-border;
+    height: 52px;
+
+    .ant-btn-link.cvat-annotation-header-button {
+        color: #374151;
+        border-radius: 8px;
+
+        &:hover {
+            color: $brand-primary;
+            background: $brand-primary-light;
+        }
+
+        &.cvat-button-active {
+            color: $brand-primary;
+        }
+    }
+
+    .cvat-annotation-header-left-group {
+        > .cvat-annotation-header-button.cvat-annotation-header-menu-button {
+            background: $brand-primary;
+            color: white;
+            margin-left: $grid-unit-size;
+
+            &:hover {
+                background: $brand-primary-hover;
+                color: white;
+            }
+        }
+    }
+}
+
+.cvat-annotation-header-player-group > div {
+    height: 52px;
+}
+
+.ant-layout-sider.cvat-canvas-controls-sidebar {
+    background: $brand-surface;
+    border-right: 1px solid $brand-border;
+}
+
+.cvat-objects-sidebar-sider {
+    border-color: $brand-border;
+}
+
+.cvat-objects-sidebar .ant-tabs-nav .ant-tabs-tab {
+    font-weight: 500;
+}
+
+.cvat-canvas-container,
+.cvat-canvas-wrapper {
+    background: #eef0f5;
+}

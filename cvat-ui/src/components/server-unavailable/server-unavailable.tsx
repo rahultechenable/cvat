@@ -48,7 +48,7 @@ function DefaultServerUnavailableComponent({ details }: ServerUnavailableProps):
         return (
             <div className='cvat-server-unavailable-message'>
                 <Text>
-                    CVAT could not reach the server or one of the services required to run it.
+                    The application could not reach the server or one of the services required to run it.
                     Make sure the backend, database, Redis and Open Policy Agent are running and available.
                 </Text>
             </div>

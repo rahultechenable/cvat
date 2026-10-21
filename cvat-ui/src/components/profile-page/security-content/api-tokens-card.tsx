@@ -239,9 +239,9 @@ function ApiTokensCard(): JSX.Element {
                                                 <Text>
                                                     Personal Access Tokens (PATs) are text strings that
                                                     can be used for authentication instead of a username/email
-                                                    and password. They allow interaction with the CVAT server
-                                                    API via various clients, including custom scripts, the CVAT
-                                                    Python SDK, and the CVAT CLI.
+                                                    and password. They allow interaction with the server
+                                                    API via various clients, including custom scripts, the
+                                                    Python SDK, and the command-line client.
                                                 </Text>
                                             </Col>
                                         </Row>

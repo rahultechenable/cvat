@@ -334,7 +334,7 @@ function RemoteBrowser(props: Props): JSX.Element {
                     <Text strong>
                         <a target='_blank' rel='noopener noreferrer' href={SHARE_MOUNT_GUIDE_URL}> mounted </a>
                     </Text>
-                    share before you built CVAT and the shared storage contains files
+                    share before you deployed the application and the shared storage contains files
                 </Paragraph>
             </>
         );

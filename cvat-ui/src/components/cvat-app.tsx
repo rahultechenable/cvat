@@ -72,6 +72,7 @@ import showPlatformNotification, {
     showUnsupportedNotification,
 } from 'utils/platform-checker';
 import '../styles.scss';
+import '../brand.scss';
 import appConfig from 'config';
 import EventRecorder from 'utils/event-recorder';
 import { authQuery } from 'utils/auth-query';
@@ -88,7 +89,6 @@ import SelectOrganizationModal from './select-organization-modal/select-organiza
 import BulkProgress from './bulk-progress';
 import ProfilePageComponent from './profile-page/profile-page';
 import ServerUnavailableComponent from './server-unavailable/server-unavailable';
-import GitHubStarModal from './github-star-prompt/github-star-modal';
 
 interface CVATAppProps {
     loadFormats: () => void;
@@ -138,7 +138,6 @@ interface CVATAppState {
     healthIinitialized: boolean;
     backendIsHealthy: boolean;
     healthCheckError: string | null;
-    githubStarPromptVisible: boolean;
 }
 class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentProps, CVATAppState> {
     constructor(props: CVATAppProps & RouteComponentProps) {
@@ -148,7 +147,6 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
             healthIinitialized: false,
             backendIsHealthy: false,
             healthCheckError: null,
-            githubStarPromptVisible: false,
         };
     }
 
@@ -232,7 +230,7 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
             });
         })
             .catch((error: unknown) => {
-                const healthCheckError = error instanceof Error ? error.message : 'The CVAT server is not reachable.';
+                const healthCheckError = error instanceof Error ? error.message : 'The server is not reachable.';
 
                 this.setState({
                     healthIinitialized: true,
@@ -256,7 +254,7 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
                             <Col>
                                 <Text>
                                     {`The browser you are using is ${name} ${version} based on ${engine}.` +
-                                        ' CVAT was tested in the latest versions of Chrome and Firefox.' +
+                                        ' This application was tested in the latest versions of Chrome and Firefox.' +
                                         ' We recommend to use Chrome (or another Chromium based browser)'}
                                 </Text>
                             </Col>
@@ -277,7 +275,7 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
                 className: 'cvat-modal-unsupported-features-warning',
                 content: (
                     <Text>
-                        {`${name} v${version} does not support API, which is used by CVAT. `}
+                        {`${name} v${version} does not support API, which is used by this application. `}
                         It is strongly recommended to update your browser.
                     </Text>
                 ),
@@ -346,10 +344,6 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
             }
         }
 
-        if (user?.id !== prevProps.user?.id && this.state.githubStarPromptVisible) {
-            this.setState({ githubStarPromptVisible: false });
-        }
-
         if (!userAgreementsInitialized && !userAgreementsFetching) {
             loadUserAgreements();
             return;
@@ -392,14 +386,6 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
         if (user && user.isVerified && !growth.initialized && !growth.fetching) {
             loadGrowthData();
             return;
-        }
-
-        if (
-            growth.data?.githubPromptEnabled &&
-            !prevProps.growth.data?.githubPromptEnabled &&
-            !this.state.githubStarPromptVisible
-        ) {
-            this.setState({ githubStarPromptVisible: true });
         }
 
         if (!pluginsInitialized && !pluginsFetching) {
@@ -494,17 +480,6 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
         resetMessages();
     }
 
-    private markGitHubStarPromptShown = (): void => {
-        const { updateGrowthData } = this.props;
-        updateGrowthData({ githubPromptShown: true });
-    };
-
-    private supportCVAT = (): void => {
-        const { updateGrowthData } = this.props;
-        updateGrowthData({ githubPromptSupportClicked: true });
-        window.open(appConfig.GITHUB_URL, '_blank', 'noopener,noreferrer');
-    };
-
     // Where you go depends on your URL
     public render(): JSX.Element {
         const {
@@ -518,7 +493,6 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
             serverAPISchemaInitialized,
             pluginComponents,
             user,
-            growth,
             location,
             isPasswordResetEnabled,
             isRegistrationEnabled,
@@ -550,9 +524,9 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
                 return (
                     <GlobalErrorBoundary>
                         <ShortcutsContextProvider>
-                            <Layout>
+                            <Layout hasSider className='cvat-app-layout'>
                                 <Header />
-                                <Layout.Content style={{ height: '100%', position: 'relative' }}>
+                                <Layout.Content className='cvat-app-content'>
                                     <ShortcutsDialog />
                                     <Switch>
                                         <Route exact path='/auth/logout' component={LogoutComponent} />
@@ -622,15 +596,6 @@ class CVATApplication extends React.PureComponent<CVATAppProps & RouteComponentP
                                     <SelectCSUpdatingSchemeModal />
                                     <SelectOrganizationModal />
                                     <BulkProgress />
-                                    {this.state.githubStarPromptVisible &&
-                                        growth.data ? (
-                                            <GitHubStarModal
-                                                open
-                                                onShown={this.markGitHubStarPromptShown}
-                                                onSupport={this.supportCVAT}
-                                                onClose={() => this.setState({ githubStarPromptVisible: false })}
-                                            />
-                                        ) : null}
                                     {/* eslint-disable-next-line */}
                                     <a id='downloadAnchor' target='_blank' style={{ display: 'none' }} download />
                                 </Layout.Content>

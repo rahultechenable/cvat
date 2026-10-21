@@ -265,7 +265,7 @@ function SetupWebhookContent(props: Props): JSX.Element {
                         </Checkbox>
                     </Form.Item>
                     <Form.Item
-                        help='CVAT will deliver events for active webhooks only'
+                        help='Events are delivered for active webhooks only'
                         name='isActive'
                         valuePropName='checked'
                     >

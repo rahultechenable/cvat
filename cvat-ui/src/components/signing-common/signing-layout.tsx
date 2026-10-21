@@ -4,13 +4,12 @@
 
 import './styles.scss';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { CombinedState } from 'reducers';
 import Layout from 'antd/lib/layout';
-import { Col, Row } from 'antd/lib/grid';
+import { Row } from 'antd/lib/grid';
 import Title from 'antd/lib/typography/Title';
+import { CheckCircleFilled } from '@ant-design/icons';
 import CVATLogo from 'components/common/cvat-logo';
-import SVGSigningBackground from '../../assets/signing-background.svg';
+import { BRAND_FULL_NAME } from 'branding';
 
 interface SignInLayoutComponentProps {
     children: JSX.Element | JSX.Element[];
@@ -49,47 +48,43 @@ export const formSizes: FormSizes = {
     },
 };
 
+const highlights = [
+    'Box Assist suggests boxes for you, just accept or adjust them',
+    'Images and video, with projects, tasks and review stages',
+    'Export to the dataset formats your models train on',
+];
+
 function SignInLayout(props: SignInLayoutComponentProps): JSX.Element {
     const { children } = props;
-    const { Content, Header } = Layout;
-    const subtitle = useSelector((state: CombinedState) => state.about.server.subtitle);
+    const { Content } = Layout;
 
-    const titleSizes = {
-        xs: { span: 0 },
-        sm: { span: 0 },
-        md: { span: 0 },
-        lg: { span: 0 },
-        xl: { span: 8 },
-        xxl: { span: 10 },
-    };
-    const logoSizes = {
-        xs: { span: 21 },
-        sm: { span: 21 },
-        md: { span: 21 },
-        lg: { span: 21 },
-        xl: { span: 21 },
-        xxl: { span: 22 },
-    };
     return (
-        <Layout>
-            <SVGSigningBackground className='cvat-signing-background' />
-            <Header className='cvat-signing-header'>
-                <Row className='cvat-signing-header-logo-wrapper' justify='center' align='middle'>
-                    <Col {...logoSizes}>
-                        <CVATLogo />
-                    </Col>
+        <Layout className='cvat-signing-layout cvat-brand-signing-layout'>
+            <div className='cvat-brand-signing-panel'>
+                <CVATLogo tone='dark' />
+                <div className='cvat-brand-signing-panel-body'>
+                    <Title className='cvat-brand-signing-headline'>
+                        Label your data faster with AI-assisted annotation
+                    </Title>
+                    <ul className='cvat-brand-signing-highlights'>
+                        {highlights.map((item) => (
+                            <li key={item}>
+                                <CheckCircleFilled />
+                                <span>{item}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className='cvat-brand-signing-panel-footer'>{BRAND_FULL_NAME}</div>
+            </div>
+            <Content className='cvat-brand-signing-content'>
+                <div className='cvat-brand-signing-mobile-logo'>
+                    <CVATLogo />
+                </div>
+                <Row justify='center' align='middle' className='cvat-brand-signing-form-row'>
+                    {children}
                 </Row>
-            </Header>
-            <Layout className='cvat-signing-layout'>
-                <Content>
-                    <Row justify='center' align='middle' style={{ height: '100%' }}>
-                        <Col {...titleSizes} className='cvat-signing-title'>
-                            <Title>{subtitle}</Title>
-                        </Col>
-                        {children}
-                    </Row>
-                </Content>
-            </Layout>
+            </Content>
         </Layout>
     );
 }

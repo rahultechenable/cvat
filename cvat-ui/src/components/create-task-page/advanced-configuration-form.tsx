@@ -272,12 +272,12 @@ class AdvancedConfigurationForm extends React.PureComponent<Props> {
     private renderCopyDataCheckbox(): JSX.Element {
         return (
             <Form.Item
-                help='If you have a low data transfer rate over the network you can copy data into CVAT to speed up work'
+                help='If you have a low data transfer rate over the network you can copy data to the server to speed up work'
                 name='copyData'
                 valuePropName='checked'
             >
                 <Checkbox>
-                    <Text className='cvat-text-color'>Copy data into CVAT</Text>
+                    <Text className='cvat-text-color'>Copy data to the server</Text>
                 </Checkbox>
             </Form.Item>
         );

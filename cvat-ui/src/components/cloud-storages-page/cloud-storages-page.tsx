@@ -17,6 +17,7 @@ import { updateHistoryFromQuery } from 'components/resource-sorting-filtering';
 import { anySearch } from 'utils/any-search';
 import { useResourceQuery } from 'utils/hooks';
 import { selectionActions } from 'actions/selection-actions';
+import PageTitle from 'components/common/page-title';
 import CloudStoragesListComponent from './cloud-storages-list';
 import EmptyListComponent from './empty-list';
 import TopBarComponent from './top-bar';
@@ -89,6 +90,7 @@ export default function StoragesPageComponent(): JSX.Element {
 
     return (
         <div className='cvat-cloud-storages-page'>
+            <PageTitle title='Cloud storages' subtitle='Connected buckets to load data from and export to' />
             <TopBarComponent
                 onApplySearch={(_search: string | null) => {
                     dispatch(

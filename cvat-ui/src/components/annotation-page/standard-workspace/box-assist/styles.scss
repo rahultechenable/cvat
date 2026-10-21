@@ -21,7 +21,7 @@
     }
 
     &.cvat-box-assist-control-active {
-        color: #40a9ff;
+        color: $brand-primary;
     }
 }
 
@@ -43,7 +43,7 @@
 
 .cvat-box-assist-bar {
     position: absolute;
-    bottom: $grid-unit-size * 6;
+    bottom: $grid-unit-size * 4;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
@@ -54,28 +54,25 @@
     gap: $grid-unit-size;
     max-width: 90%;
     padding: $grid-unit-size $grid-unit-size * 1.5;
-    border-radius: $border-radius-base;
-    background: rgb(0 0 0 / 65%);
+    border-radius: 14px;
+    border: 1px solid $brand-border;
+    background: rgb(255 255 255 / 96%);
+    box-shadow: 0 8px 28px rgb(16 24 40 / 16%);
+    backdrop-filter: blur(6px);
 
-    .ant-typography {
-        color: white;
-    }
-
-    .ant-typography.ant-typography-danger {
-        color: #ff7875;
+    .cvat-box-assist-bar-status {
+        font-weight: 500;
     }
 
     .ant-typography.ant-typography-warning {
-        color: #ffc53d;
         font-size: 12px;
-    }
-
-    .ant-btn-text {
-        color: white;
+        flex-basis: 100%;
+        text-align: center;
     }
 
     .cvat-box-assist-bar-icon {
-        color: #40a9ff;
+        color: $brand-primary;
+        font-size: 16px;
     }
 
     .cvat-box-assist-bar-selected {

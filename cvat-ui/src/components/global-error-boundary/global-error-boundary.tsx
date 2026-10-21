@@ -144,7 +144,7 @@ class GlobalErrorBoundary extends React.PureComponent<Props, State> {
                                         <li>Full error message above</li>
                                         <li>Steps to reproduce the issue</li>
                                         <li>Your operating system and browser version</li>
-                                        <li>CVAT version</li>
+                                        <li>Application version</li>
                                         <ul>
                                             <li>
                                                 <Text strong>Server: </Text>
@@ -162,7 +162,7 @@ class GlobalErrorBoundary extends React.PureComponent<Props, State> {
                                         Press
                                         {/* eslint-disable-next-line */}
                                         <a onClick={restoreGlobalState}> here </a>
-                                        if you wish CVAT tried to restore your annotation progress or
+                                        if you wish the application tried to restore your annotation progress or
                                         {/* eslint-disable-next-line */}
                                         <a onClick={() => window.location.reload()}> update </a>
                                         the page

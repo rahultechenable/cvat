@@ -12,6 +12,7 @@ import Spin from 'antd/lib/spin';
 
 import { updateHistoryFromQuery } from 'components/resource-sorting-filtering';
 import { useResourceQuery } from 'utils/hooks';
+import PageTitle from 'components/common/page-title';
 import EmptyListComponent from './empty-list';
 import RequestsList from './requests-list';
 
@@ -35,6 +36,7 @@ export default function RequestsPageComponent(): JSX.Element {
 
     return (
         <div className='cvat-requests-page'>
+            <PageTitle title='Requests' subtitle='Imports, exports and other background operations' />
             { fetching ? (
                 <div>
                     <Spin size='large' className='cvat-spinner' />

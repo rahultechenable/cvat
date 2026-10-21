@@ -12,10 +12,11 @@ import { Link } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
 import { Col, Row } from 'antd/lib/grid';
 import Card from 'antd/lib/card';
+import Button from 'antd/lib/button';
 import Text from 'antd/lib/typography/Text';
 import Icon from '@ant-design/icons';
 import {
-    BorderOutlined,
+    BorderOutlined, EditOutlined,
     LoadingOutlined, MoreOutlined, QuestionCircleOutlined,
 } from '@ant-design/icons/lib/icons';
 import { DurationIcon, FramesIcon } from 'icons';
@@ -189,6 +190,15 @@ function JobItem(props: Readonly<Props>): JSX.Element {
                         <Col>
                             <Text>Updated: </Text>
                             <Text type='secondary'>{`${formatDate(updated)}`}</Text>
+                        </Col>
+                    </Row>
+                    <Row className='cvat-job-item-annotate'>
+                        <Col>
+                            <Link to={`/tasks/${job.taskId}/jobs/${job.id}`}>
+                                <Button type='primary' size='small' icon={<EditOutlined />}>
+                                    Annotate
+                                </Button>
+                            </Link>
                         </Col>
                     </Row>
                 </Col>

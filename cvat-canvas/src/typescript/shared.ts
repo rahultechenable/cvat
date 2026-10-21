@@ -599,7 +599,7 @@ export function validateUnionResult(result: martinez.Geometry): void {
         if (polygon.length > 1) {
             throw new Error(
                 'Cannot join these polygons: the operation would create a shape with holes, ' +
-                'which is not supported by CVAT. Please select different polygons or use the mask tool.',
+                'which is not supported. Please select different polygons or use the mask tool.',
             );
         }
     }

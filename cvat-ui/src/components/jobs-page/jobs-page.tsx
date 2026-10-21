@@ -21,6 +21,7 @@ import { anySearch } from 'utils/any-search';
 import { useResourceQuery } from 'utils/hooks';
 import { selectionActions } from 'actions/selection-actions';
 
+import PageTitle from 'components/common/page-title';
 import TopBarComponent from './top-bar';
 import JobsContentComponent from './jobs-content';
 import EmptyListComponent from './empty-list';
@@ -123,6 +124,7 @@ function JobsPageComponent(): JSX.Element {
 
     return (
         <div className='cvat-jobs-page'>
+            <PageTitle title='Jobs' subtitle='Annotation work assigned to people' />
             <TopBarComponent
                 query={updatedQuery}
                 selectedCount={selectedCount}

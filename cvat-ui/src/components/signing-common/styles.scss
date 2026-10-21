@@ -4,17 +4,16 @@
 
 @import '../../styles';
 
-$heading-font: 'Sora', sans-serif;
-$signing-font: 'Roboto Flex', sans-serif;
+$heading-font: $brand-font;
+$signing-font: $brand-font;
 $heading-color: white;
 $error-color: #ff4d4f;
-$action-button-color-1: black;
+$action-button-color-1: $brand-primary;
 $action-button-color-2: gray;
 $action-button-color-3: #d4d4d4;
 $placeholder-color: #c5bfbf;
 $base-transition: all 0.8s ease;
 $input-transition: all 0.3s ease;
-$social-google-background: #4286f5;
 
 .cvat-signing-layout {
     font-family: $signing-font;
@@ -341,5 +340,113 @@ $social-google-background: #4286f5;
         @extend .cvat-signing-form;
 
         height: $grid-unit-size * 76;
+    }
+}
+
+// split layout: brand panel on the left, form on the right
+.cvat-brand-signing-layout.ant-layout {
+    flex-direction: row;
+    min-height: 100vh;
+    background: $brand-surface;
+
+    .cvat-brand-signing-panel {
+        flex: 0 0 44%;
+        max-width: 640px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: $grid-unit-size * 6;
+        color: white;
+        background:
+            radial-gradient(circle at 15% 10%, rgb(255 255 255 / 14%) 0, transparent 40%),
+            radial-gradient(circle at 90% 85%, rgb(56 189 248 / 30%) 0, transparent 45%),
+            linear-gradient(150deg, #5b21b6 0%, #7c3aed 55%, #6d28d9 100%);
+
+        @media (max-width: 991px) {
+            display: none;
+        }
+    }
+
+    .cvat-brand-signing-headline.ant-typography {
+        color: white;
+        font-size: 40px;
+        line-height: 1.15;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: $grid-unit-size * 4;
+    }
+
+    .cvat-brand-signing-highlights {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: $grid-unit-size * 2;
+        font-size: 16px;
+
+        li {
+            display: flex;
+            gap: $grid-unit-size * 1.5;
+            align-items: flex-start;
+            color: rgb(255 255 255 / 92%);
+        }
+
+        .anticon {
+            margin-top: 3px;
+            color: #c4b5fd;
+        }
+    }
+
+    .cvat-brand-signing-panel-footer {
+        font-size: 13px;
+        color: rgb(255 255 255 / 70%);
+    }
+
+    .cvat-brand-signing-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: $brand-surface;
+        position: relative;
+    }
+
+    .cvat-brand-signing-mobile-logo {
+        position: absolute;
+        top: $grid-unit-size * 3;
+        left: $grid-unit-size * 3;
+
+        @media (min-width: 992px) {
+            display: none;
+        }
+    }
+
+    .cvat-brand-signing-form-row {
+        width: 100%;
+    }
+
+    .cvat-credentials-form-item .ant-input-affix-wrapper-focused,
+    .cvat-credentials-form-item .ant-input-affix-wrapper-focused:hover {
+        box-shadow: 0 2px 0 0 $brand-primary;
+    }
+
+    .cvat-credentials-link a,
+    .cvat-credentials-link a:hover {
+        color: $brand-primary;
+    }
+
+    .cvat-credentials-action-button {
+        height: $grid-unit-size * 6;
+        font-weight: 600;
+
+        &:hover {
+            background-color: $brand-primary-hover !important;
+            color: white !important;
+        }
+    }
+
+    .cvat-login-form-wrapper {
+        height: auto;
     }
 }

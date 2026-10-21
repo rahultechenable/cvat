@@ -113,7 +113,7 @@ function LeftGroup(props: Props): JSX.Element {
                     closable={false}
                     footer={[]}
                 >
-                    <Text>CVAT is saving your annotations, please wait </Text>
+                    <Text>Saving your annotations, please wait </Text>
                     <LoadingOutlined />
                 </Modal>
             )}

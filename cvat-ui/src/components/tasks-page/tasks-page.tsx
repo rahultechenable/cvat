@@ -20,6 +20,7 @@ import { anySearch } from 'utils/any-search';
 import { useResourceQuery } from 'utils/hooks';
 import { selectionActions } from 'actions/selection-actions';
 
+import PageTitle from 'components/common/page-title';
 import TopBar from './top-bar';
 import EmptyListComponent from './empty-list';
 
@@ -99,6 +100,7 @@ function TasksPageComponent(props: Readonly<Props>): JSX.Element {
 
     return (
         <div className='cvat-tasks-page'>
+            <PageTitle title='Tasks' subtitle='Batches of images or videos to annotate' />
             <TopBar
                 onApplySearch={(search: string | null) => {
                     dispatch(

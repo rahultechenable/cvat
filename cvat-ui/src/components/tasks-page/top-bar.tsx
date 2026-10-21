@@ -150,7 +150,9 @@ export default function TopBarComponent(props: Readonly<VisibleTopBarProps>): JS
                             </CvatDropdownMenuPaper>
                         )}
                     >
-                        <Button type='primary' className='cvat-create-task-dropdown' icon={<PlusOutlined />} />
+                        <Button type='primary' className='cvat-create-task-dropdown' icon={<PlusOutlined />}>
+                            New task
+                        </Button>
                     </Popover>
                 </div>
             </Col>

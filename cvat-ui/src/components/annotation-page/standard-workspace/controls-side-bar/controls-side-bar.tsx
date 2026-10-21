@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: MIT
 
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Layout from 'antd/lib/layout';
 import message from 'antd/lib/message';
 
@@ -87,7 +88,7 @@ const componentShortcuts = {
     },
     PASTE_SHAPE: {
         name: 'Paste shape',
-        description: 'Paste a shape from internal CVAT clipboard',
+        description: 'Paste a shape from the internal clipboard',
         sequences: ['ctrl+v', 'command+v'],
         scope: ShortcutScope.OBJECTS_SIDEBAR,
     },
@@ -184,6 +185,11 @@ export default function ControlsSideBarComponent(props: Props): JSX.Element {
         groupSelection,
     } = props;
 
+    // the AI tools panel only lists serverless models; hide it when none are deployed
+    const hasServerlessModels = useSelector((state: CombinedState) => (
+        state.models.interactors.length + state.models.detectors.length +
+        state.models.trackers.length + state.models.reid.length > 0
+    ));
     const controlsDisabled = !labels.length || frameData.deleted;
     const withUnspecifiedType = labels.some((label: any) => label.type === 'any' && !label.hasParent);
     let rectangleControlVisible = withUnspecifiedType;
@@ -440,7 +446,7 @@ export default function ControlsSideBarComponent(props: Props): JSX.Element {
 
                 <hr />
 
-                <ObservedToolsControl />
+                {hasServerlessModels && <ObservedToolsControl />}
                 {rectangleControlVisible && <ObservedBoxAssistControl />}
                 <ObservedOpenCVControl />
                 {

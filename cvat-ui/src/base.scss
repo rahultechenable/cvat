@@ -8,37 +8,47 @@ $header-height: $grid-unit-size * 6;
 $layout-lg-grid-size: $grid-unit-size * 2;
 $layout-sm-grid-color: rgba(0, 0, 0, 15%);
 $layout-lg-grid-color: rgba(0, 0, 0, 15%);
-$header-color: #d8d8d8;
-$text-color: #303030;
-$text-color-secondary: rgba(0, 0, 0, 45%);
-$hover-menu-color: rgba(24, 144, 255, 5%);
-$completed-progress-color: #61c200;
-$validation-progress-color: #1890ff;
-$annotation-progress-color: #c1c1c1;
-$border-color-1: #f0f0f0;
-$border-color-hover: #40a9ff;
+$header-color: #ffffff;
+$text-color: #111827;
+$text-color-secondary: #6b7280;
+$hover-menu-color: rgba(124, 58, 237, 6%);
+$completed-progress-color: #22c55e;
+$validation-progress-color: #7c3aed;
+$annotation-progress-color: #d4d4de;
+$border-color-1: #e6e6ef;
+$border-color-hover: #8b5cf6;
 $background-color-1: white;
-$background-color-2: #f1f1f1;
-$notification-background-color-1: #d9ecff;
-$notification-border-color-1: #1890ff;
+$background-color-2: #f7f7fb;
+$notification-background-color-1: #f3effe;
+$notification-border-color-1: #7c3aed;
 $transparent-color: rgba(0, 0, 0, 0%);
-$player-slider-color: #979797;
-$player-buttons-color: #242424;
+$player-slider-color: #e4e4ec;
+$player-buttons-color: #374151;
 $danger-icon-color: #ff4136;
 $ok-icon-color: #61c200;
-$info-icon-color: #0074d9;
-$objects-bar-tabs-color: #bebebe;
+$info-icon-color: #7c3aed;
+$objects-bar-tabs-color: #f7f7fb;
 $objects-bar-icons-color: #242424; // #6e6e6e
-$active-label-background-color: #d8ecff;
+$active-label-background-color: #f3effe;
 $object-item-border-color: rgba(0, 0, 0, 70%);
-$slider-color: #1890ff;
+$slider-color: #7c3aed;
 $border-radius-base: 8px;
-$box-shadow-base: 0 1px 2px -2px rgba(0, 0, 0, 16%), 0 3px 6px 0 rgba(0, 0, 0, 12%), 0 5px 12px 4px rgba(0, 0, 0, 9%);
+$box-shadow-base: 0 1px 3px rgba(16, 24, 40, 8%), 0 8px 24px rgba(16, 24, 40, 8%);
 $box-shadow-transition: 0.2s;
 $monospaced-fonts-stack: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono,
     Courier New, monospace;
 $scroll-breakpoint: 1300px;
 $annotation-view-control-transition: 0.1s transform;
+
+// Brand palette, keep in sync with theme.ts
+$brand-primary: #7c3aed;
+$brand-primary-hover: #6d28d9;
+$brand-primary-light: #f3effe;
+$brand-surface: #ffffff;
+$brand-border: #e6e6ef;
+$brand-sidebar-width: 232px;
+$brand-sidebar-collapsed-width: 64px;
+$brand-font: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
 .cvat-base-preview {
     .ant-spin {

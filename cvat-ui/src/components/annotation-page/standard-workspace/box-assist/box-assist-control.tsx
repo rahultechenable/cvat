@@ -23,6 +23,7 @@ import {
 import './styles.scss';
 
 const CustomPopover = withVisibilityHandling(Popover, 'box-assist-control');
+const MAX_LISTED_CLASSES = 8;
 
 function BoxAssistControlComponent(): JSX.Element {
     const {
@@ -96,9 +97,15 @@ function BoxAssistControlComponent(): JSX.Element {
             {selectedModel && (
                 <Row>
                     <Col span={24}>
-                        <Text type='secondary' className='cvat-box-assist-model-labels'>
-                            {`Classes: ${selectedModel.labels.join(', ')}`}
-                        </Text>
+                        <CVATTooltip title={selectedModel.labels.join(', ')}>
+                            <Text type='secondary' className='cvat-box-assist-model-labels'>
+                                {selectedModel.labels.length > MAX_LISTED_CLASSES ?
+                                    `${selectedModel.labels.length} classes: ` +
+                                    `${selectedModel.labels.slice(0, MAX_LISTED_CLASSES).join(', ')}, ` +
+                                    `+${selectedModel.labels.length - MAX_LISTED_CLASSES} more` :
+                                    `Classes: ${selectedModel.labels.join(', ')}`}
+                            </Text>
+                        </CVATTooltip>
                     </Col>
                 </Row>
             )}

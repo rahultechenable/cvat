@@ -307,7 +307,7 @@ ThunkAction {
                     let helperMessage = '';
                     if (!message) {
                         if ([RQStatus.QUEUED, RQStatus.STARTED].includes(status)) {
-                            message = 'CVAT queued the task to import';
+                            message = 'The task was queued for import';
                             helperMessage = 'You may close the window.';
                         } else if (status === RQStatus.FAILED) {
                             message = 'Images processing failed';

@@ -49,11 +49,11 @@ function InvitationModal(props: Props): JSX.Element {
                 form={form}
             >
                 <Paragraph>
-                    <Text>Invite CVAT users to collaborate </Text>
+                    <Text>Invite users to collaborate </Text>
                 </Paragraph>
                 <Paragraph>
                     <Text type='secondary'>
-                        If the email address is registered on CVAT, the user will be added to the organization
+                        If the email address is already registered, the user will be added to the organization
                     </Text>
                 </Paragraph>
                 <Form.List name='users'>

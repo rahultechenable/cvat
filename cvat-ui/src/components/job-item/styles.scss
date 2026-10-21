@@ -86,3 +86,7 @@
 .cvat-job-item-stage, .cvat-job-item-state {
     width: $grid-unit-size * 16;
 }
+
+.cvat-job-item-annotate {
+    margin-top: $grid-unit-size;
+}

@@ -4,35 +4,41 @@
 // SPDX-License-Identifier: MIT
 
 import './styles.scss';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
-import { Row, Col } from 'antd/lib/grid';
-import { MenuProps } from 'antd/lib/menu';
+import { Row } from 'antd/lib/grid';
 import {
     SettingOutlined,
     InfoCircleOutlined,
     LoadingOutlined,
     LogoutOutlined,
-    GithubOutlined,
-    QuestionCircleOutlined,
-    CaretDownOutlined,
     ControlOutlined,
     UserOutlined,
     TeamOutlined,
     PlusOutlined,
     MailOutlined,
+    FolderOutlined,
+    ProfileOutlined,
+    CheckSquareOutlined,
+    CloudOutlined,
+    HistoryOutlined,
+    BarChartOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    UpOutlined,
 } from '@ant-design/icons';
 import Layout from 'antd/lib/layout';
+import Menu, { MenuProps } from 'antd/lib/menu';
+import Avatar from 'antd/lib/avatar';
 import Button from 'antd/lib/button';
 import Dropdown from 'antd/lib/dropdown';
 import Modal from 'antd/lib/modal';
 import Text from 'antd/lib/typography/Text';
 
-import config from 'config';
+import { BRAND_FULL_NAME } from 'branding';
 
 import { Organization } from 'cvat-core-wrapper';
-import CVATTooltip from 'components/common/cvat-tooltip';
 import CVATLogo from 'components/common/cvat-logo';
 import { switchSettingsModalVisible as switchSettingsModalVisibleAction } from 'actions/settings-actions';
 import { logoutAsync } from 'actions/auth-actions';
@@ -174,10 +180,6 @@ function HeaderComponent(props: Props): JSX.Element {
         openSelectOrganizationModal,
     } = props;
 
-    const {
-        CHANGELOG_URL, LICENSE_URL, GITHUB_URL, GUIDE_URL, DISCORD_URL,
-    } = config;
-
     const isMounted = useIsMounted();
 
     useEffect(() => {
@@ -206,38 +208,21 @@ function HeaderComponent(props: Props): JSX.Element {
 
     const aboutPlugins = usePlugins((state: CombinedState) => state.plugins.components.about.links.items, props);
     const aboutLinks: [JSX.Element, number][] = [];
-    aboutLinks.push([(
-        <Col key='changelog'>
-            <a href={CHANGELOG_URL} target='_blank' rel='noopener noreferrer'>
-                What&apos;s new?
-            </a>
-        </Col>
-    ), 0]);
-    aboutLinks.push([(
-        <Col key='license'>
-            <a href={LICENSE_URL} target='_blank' rel='noopener noreferrer'>
-                MIT License
-            </a>
-        </Col>
-    ), 10]);
-    aboutLinks.push([(
-        <Col key='discord'>
-            <a href={DISCORD_URL} target='_blank' rel='noopener noreferrer'>
-                Find us on Discord
-            </a>
-        </Col>
-    ), 20]);
-
     aboutLinks.push(...aboutPlugins.map(({ component: Component, weight }, index: number) => (
         [<Component key={index} targetProps={props} />, weight] as [JSX.Element, number]
     )));
 
     const showAboutModal = useCallback((): void => {
         Modal.info({
-            title: `${about.server.name}`,
+            title: BRAND_FULL_NAME,
             content: (
                 <div>
                     <p>{`${about.server.description}`}</p>
+                    <p>
+                        <Text type='secondary'>
+                            Includes open-source software distributed under the MIT License.
+                        </Text>
+                    </p>
                     <p>
                         <Text strong>Server version:</Text>
                         <Text type='secondary'>{` ${about.server.version}`}</Text>
@@ -252,7 +237,7 @@ function HeaderComponent(props: Props): JSX.Element {
                     </Row>
                 </div>
             ),
-            width: 800,
+            width: 640,
             okButtonProps: {
                 style: {
                     width: '100px',
@@ -391,136 +376,118 @@ function HeaderComponent(props: Props): JSX.Element {
         ]),
     );
 
-    const getButtonClassName = (value: string, highlightable = true): string => {
-        // eslint-disable-next-line security/detect-non-literal-regexp
-        const regex = new RegExp(`${value}$`);
-        const baseClass = `cvat-header-${value}-button cvat-header-button`;
-        return highlightable && location.pathname.match(regex) ?
-            `${baseClass} cvat-active-header-button` : baseClass;
+    const isAnnotationView = /^\/tasks\/\d+\/jobs\/\d+/.test(location.pathname);
+    const [collapsedByUser, setCollapsedByUser] = useState<boolean>(() => {
+        try {
+            return localStorage.getItem('cvat-sidebar-collapsed') === 'true';
+        } catch (_error: unknown) {
+            return false;
+        }
+    });
+    // the annotation view needs all the space, so navigation is always compact there
+    const collapsed = isAnnotationView || collapsedByUser;
+    const toggleCollapsed = (): void => {
+        const value = !collapsedByUser;
+        setCollapsedByUser(value);
+        try {
+            localStorage.setItem('cvat-sidebar-collapsed', String(value));
+        } catch (_error: unknown) {
+            // the choice just won't be remembered
+        }
     };
 
+    const navigationItems: { key: string; label: string; icon: JSX.Element; path: string }[] = [
+        {
+            key: 'projects', label: 'Projects', icon: <FolderOutlined />, path: '/projects',
+        },
+        {
+            key: 'tasks', label: 'Tasks', icon: <ProfileOutlined />, path: '/tasks',
+        },
+        {
+            key: 'jobs', label: 'Jobs', icon: <CheckSquareOutlined />, path: '/jobs',
+        },
+        {
+            key: 'requests', label: 'Requests', icon: <HistoryOutlined />, path: '/requests',
+        },
+        {
+            key: 'cloudstorages', label: 'Cloud storages', icon: <CloudOutlined />, path: '/cloudstorages',
+        },
+    ];
+    const [, firstPathPart] = location.pathname.split('/');
+    const selectedKey = navigationItems.find((item) => item.key === firstPathPart)?.key ?? '';
+
+    const workspaceName = currentOrganization ? currentOrganization.slug : 'Personal workspace';
+    const userInitial = (user.firstName || user.username || '?').slice(0, 1).toUpperCase();
+
     return (
-        <Layout.Header className='cvat-header'>
+        <Layout.Sider
+            className={`cvat-header cvat-app-sidebar ${collapsed ? 'cvat-app-sidebar-collapsed' : ''}`}
+            width={232}
+            collapsedWidth={64}
+            collapsed={collapsed}
+            trigger={null}
+            theme='light'
+        >
             <GlobalHotKeys keyMap={subKeyMap(componentShortcuts, keyMap)} handlers={handlers} />
-            <div className='cvat-left-header'>
-                <CVATLogo />
-                <Button
-                    className={getButtonClassName('projects')}
-                    type='link'
-                    value='projects'
-                    href='/projects?page=1'
-                    onClick={(event: React.MouseEvent): void => {
-                        event.preventDefault();
-                        history.push('/projects');
-                    }}
-                >
-                    Projects
-                </Button>
-                <Button
-                    className={getButtonClassName('tasks')}
-                    type='link'
-                    value='tasks'
-                    href='/tasks?page=1'
+            <div className='cvat-app-sidebar-brand'>
+                <a
+                    href='/tasks'
                     onClick={(event: React.MouseEvent): void => {
                         event.preventDefault();
                         history.push('/tasks');
                     }}
                 >
-                    Tasks
-                </Button>
-                <Button
-                    className={getButtonClassName('jobs')}
-                    type='link'
-                    value='jobs'
-                    href='/jobs?page=1'
-                    onClick={(event: React.MouseEvent): void => {
-                        event.preventDefault();
-                        history.push('/jobs');
-                    }}
-                >
-                    Jobs
-                </Button>
-                <Button
-                    className={getButtonClassName('cloudstorages')}
-                    type='link'
-                    value='cloudstorages'
-                    href='/cloudstorages?page=1'
-                    onClick={(event: React.MouseEvent): void => {
-                        event.preventDefault();
-                        history.push('/cloudstorages');
-                    }}
-                >
-                    Cloud Storages
-                </Button>
-                <Button
-                    className={getButtonClassName('requests')}
-                    type='link'
-                    value='requests'
-                    href='/requests?page=1'
-                    onClick={(event: React.MouseEvent): void => {
-                        event.preventDefault();
-                        history.push('/requests');
-                    }}
-                >
-                    Requests
-                </Button>
-                <Button
-                    className={getButtonClassName('models')}
-                    type='link'
-                    value='models'
-                    href='/models'
-                    onClick={(event: React.MouseEvent): void => {
-                        event.preventDefault();
-                        history.push('/models');
-                    }}
-                >
-                    Models
-                </Button>
-                {isAnalyticsPluginActive && user.hasAnalyticsAccess ? (
-                    <Button
-                        className={getButtonClassName('analytics', false)}
-                        type='link'
-                        href='/analytics'
-                        onClick={(event: React.MouseEvent): void => {
-                            event.preventDefault();
-                            window.open('/analytics', '_blank');
-                        }}
-                    >
-                        Analytics
-                    </Button>
-                ) : null}
+                    <CVATLogo variant={collapsed ? 'mark' : 'full'} />
+                </a>
             </div>
-            <div className='cvat-right-header'>
-                <CVATTooltip overlay='Click to open repository'>
+
+            <Menu
+                className='cvat-app-sidebar-menu'
+                mode='inline'
+                selectedKeys={[selectedKey]}
+                inlineCollapsed={collapsed}
+                items={[
+                    ...navigationItems.map((item) => ({
+                        key: item.key,
+                        icon: item.icon,
+                        className: `cvat-header-${item.key}-button cvat-header-button`,
+                        label: (
+                            <a
+                                href={`${item.path}?page=1`}
+                                onClick={(event: React.MouseEvent): void => {
+                                    event.preventDefault();
+                                    history.push(item.path);
+                                }}
+                            >
+                                {item.label}
+                            </a>
+                        ),
+                    })),
+                    ...(isAnalyticsPluginActive && user.hasAnalyticsAccess ? [{
+                        key: 'analytics',
+                        icon: <BarChartOutlined />,
+                        className: 'cvat-header-analytics-button cvat-header-button',
+                        label: 'Analytics',
+                        onClick: () => window.open('/analytics', '_blank'),
+                    }] : []),
+                ]}
+            />
+
+            <div className='cvat-app-sidebar-footer'>
+                {!isAnnotationView && (
                     <Button
-                        icon={<GithubOutlined />}
-                        size='large'
-                        className='cvat-open-repository-button cvat-header-button'
-                        type='link'
-                        href={GITHUB_URL}
-                        onClick={(event: React.MouseEvent): void => {
-                            event.preventDefault();
-                            window.open(GITHUB_URL, '_blank');
-                        }}
-                    />
-                </CVATTooltip>
-                <CVATTooltip overlay='Click to open guide'>
-                    <Button
-                        icon={<QuestionCircleOutlined />}
-                        size='large'
-                        className='cvat-open-guide-button cvat-header-button'
-                        type='link'
-                        href={GUIDE_URL}
-                        onClick={(event: React.MouseEvent): void => {
-                            event.preventDefault();
-                            window.open(GUIDE_URL, '_blank');
-                        }}
-                    />
-                </CVATTooltip>
+                        type='text'
+                        className='cvat-app-sidebar-collapse-button'
+                        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        onClick={toggleCollapsed}
+                    >
+                        {collapsed ? null : 'Collapse'}
+                    </Button>
+                )}
                 <Dropdown
                     trigger={['click']}
                     destroyPopupOnHide
-                    placement='bottomRight'
+                    placement='topLeft'
                     menu={{
                         items: menuItems.sort((menuItem1, menuItem2) => menuItem1[1] - menuItem2[1])
                             .map((menuItem) => menuItem[0]),
@@ -534,28 +501,30 @@ function HeaderComponent(props: Props): JSX.Element {
                         }
                     }}
                 >
-                    <span>
-                        <UserOutlined className='cvat-header-dropdown-icon' />
-                        <Row>
-                            <Col span={24}>
-                                <Text strong className='cvat-header-menu-user-dropdown-user'>
-                                    {user.username.length > 14 ? `${user.username.slice(0, 10)} ...` : user.username}
-                                </Text>
-                            </Col>
-                            { currentOrganization ? (
-                                <Col span={24}>
-                                    <Text className='cvat-header-menu-user-dropdown-organization'>
-                                        {currentOrganization.slug}
+                    <div className='cvat-app-sidebar-user'>
+                        <Avatar size={32} className='cvat-app-sidebar-avatar'>{userInitial}</Avatar>
+                        {!collapsed && (
+                            <>
+                                <div className='cvat-app-sidebar-user-text'>
+                                    <Text strong ellipsis className='cvat-header-menu-user-dropdown-user'>
+                                        {user.username}
                                     </Text>
-                                </Col>
-                            ) : null }
-                        </Row>
-                        <CaretDownOutlined className='cvat-header-dropdown-icon' />
-                    </span>
+                                    <Text
+                                        type='secondary'
+                                        ellipsis
+                                        className='cvat-header-menu-user-dropdown-organization'
+                                    >
+                                        {workspaceName}
+                                    </Text>
+                                </div>
+                                <UpOutlined className='cvat-app-sidebar-user-caret' />
+                            </>
+                        )}
+                    </div>
                 </Dropdown>
             </div>
             <SettingsModal visible={settingsModalVisible} onClose={closeSettings} />
-        </Layout.Header>
+        </Layout.Sider>
     );
 }
 

@@ -128,7 +128,7 @@ const PAID_PLACEHOLDER_CONFIG = {
     features: {
         qualityControl:
         'The Quality Control feature enables effortless evaluation of annotation quality by creating' +
-        ' a Ground Truth job that works as benchmark. CVAT automatically compares all task-related jobs' +
+        ' a Ground Truth job that works as benchmark. The tool automatically compares all task-related jobs' +
         ' to this benchmark, calculating annotation precision to ensure high-quality results.',
         analyticsReport:
         'The Analytics Report feature provides comprehensive insights into your resource, including key metrics like' +
