@@ -17,7 +17,9 @@ RUN pip install --no-cache-dir --timeout 120 --retries 10 -r requirements.txt
 
 COPY server.py .
 
+# YOLO_AUTOINSTALL: never pip-install packages at runtime when a model needs something missing
 ENV BOX_ASSIST_MODELS_DIR=/models \
-    YOLO_CONFIG_DIR=/tmp/ultralytics
+    YOLO_CONFIG_DIR=/tmp/ultralytics \
+    YOLO_AUTOINSTALL=false
 EXPOSE 8765
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8765"]

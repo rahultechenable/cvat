@@ -8,7 +8,16 @@ from rest_framework import serializers
 class BoxAssistModelSerializer(serializers.Serializer):
     id = serializers.CharField()
     name = serializers.CharField()
+    path = serializers.CharField(help_text="Where the model file is on the server machine")
+    task = serializers.CharField(allow_blank=True)
     labels = serializers.ListField(child=serializers.CharField())
+    usable = serializers.BooleanField(help_text="Whether the model can suggest boxes")
+    reason = serializers.CharField(allow_blank=True, help_text="Why the model can't be used")
+
+
+class BoxAssistModelListSerializer(serializers.Serializer):
+    scanning = serializers.BooleanField(help_text="The model files are still being checked")
+    models = BoxAssistModelSerializer(many=True)
 
 
 class BoxAssistSuggestRequestSerializer(serializers.Serializer):

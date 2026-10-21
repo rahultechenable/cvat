@@ -18,16 +18,24 @@ import { CombinedState } from 'reducers';
 import CVATTooltip from 'components/common/cvat-tooltip';
 import withVisibilityHandling from '../controls-side-bar/handle-popover-visibility';
 import {
-    useBoxAssistState, updateBoxAssistState, fetchBoxAssistModels, requestPrediction,
+    BoxAssistModel, useBoxAssistState, updateBoxAssistState, fetchBoxAssistModels, requestPrediction,
 } from './box-assist-store';
 import './styles.scss';
 
 const CustomPopover = withVisibilityHandling(Popover, 'box-assist-control');
 const MAX_LISTED_CLASSES = 8;
 
+interface ModelOption {
+    value: string;
+    label: string;
+    disabled: boolean;
+    model: BoxAssistModel;
+    search: string;
+}
+
 function BoxAssistControlComponent(): JSX.Element {
     const {
-        enabled, modelId, threshold, autoPredict, models, modelsFetching, modelsError,
+        enabled, modelId, threshold, autoPredict, models, modelsFetching, modelsScanning, modelsError,
     } = useBoxAssistState();
     const normalizedKeyMap = useSelector((state: CombinedState) => state.shortcuts.normalizedKeyMap);
 
@@ -37,7 +45,26 @@ function BoxAssistControlComponent(): JSX.Element {
         }
     }, []);
 
-    const selectedModel = models?.find((model) => model.id === modelId);
+    const selectedModel = models?.find((model) => model.id === modelId && model.usable);
+    const usableModels = (models ?? []).filter((model) => model.usable);
+    const otherModels = (models ?? []).filter((model) => !model.usable);
+    const toOption = (model: BoxAssistModel): ModelOption => ({
+        value: model.id,
+        label: model.name,
+        disabled: !model.usable,
+        model,
+        search: `${model.name} ${model.path} ${model.labels.join(' ')}`,
+    });
+    const modelOptions = [
+        ...(usableModels.length ? [{
+            label: `Can suggest boxes (${usableModels.length})`,
+            options: usableModels.map(toOption),
+        }] : []),
+        ...(otherModels.length ? [{
+            label: `Can't suggest boxes (${otherModels.length})`,
+            options: otherModels.map(toOption),
+        }] : []),
+    ];
 
     const popoverContent = (
         <div className='cvat-box-assist-popover-content'>
@@ -65,20 +92,43 @@ function BoxAssistControlComponent(): JSX.Element {
                 <Col flex='auto'>
                     <Select
                         className='cvat-box-assist-model-select'
-                        placeholder='Select a model'
+                        popupClassName='cvat-box-assist-model-select-dropdown'
+                        placeholder={usableModels.length ? 'Select a model' : 'No usable models'}
                         value={selectedModel ? modelId : undefined}
-                        loading={modelsFetching}
+                        loading={modelsFetching || modelsScanning}
                         disabled={!models?.length}
+                        showSearch
+                        optionFilterProp='search'
+                        popupMatchSelectWidth={480}
+                        listHeight={360}
                         onChange={(value: string) => updateBoxAssistState({ modelId: value })}
-                        options={(models ?? []).map((model) => ({ value: model.id, label: model.name }))}
+                        options={modelOptions}
+                        optionRender={(option) => {
+                            const { model } = option.data as ModelOption;
+                            return (
+                                <div className='cvat-box-assist-model-option'>
+                                    <Text strong={model.usable} type={model.usable ? undefined : 'secondary'}>
+                                        {model.name}
+                                    </Text>
+                                    <Text type='secondary' className='cvat-box-assist-model-option-path'>
+                                        {model.path}
+                                    </Text>
+                                    {!model.usable && (
+                                        <Text type='secondary' className='cvat-box-assist-model-option-reason'>
+                                            {model.reason}
+                                        </Text>
+                                    )}
+                                </div>
+                            );
+                        }}
                     />
                 </Col>
                 <Col>
-                    <CVATTooltip title='Reload the model list'>
+                    <CVATTooltip title='Search the machine for models again'>
                         <Button
                             icon={<ReloadOutlined />}
-                            loading={modelsFetching}
-                            onClick={() => fetchBoxAssistModels()}
+                            loading={modelsFetching || modelsScanning}
+                            onClick={() => fetchBoxAssistModels(true)}
                         />
                     </CVATTooltip>
                 </Col>
@@ -86,17 +136,31 @@ function BoxAssistControlComponent(): JSX.Element {
             {modelsError && (
                 <Alert className='cvat-box-assist-row' type='error' showIcon message={modelsError} />
             )}
-            {models && !models.length && (
+            {modelsScanning && (
+                <Row>
+                    <Col span={24}>
+                        <Text type='secondary' className='cvat-box-assist-model-labels'>
+                            {`Checking model files on the server... ${models?.length ?? 0} found so far`}
+                        </Text>
+                    </Col>
+                </Row>
+            )}
+            {models && !modelsScanning && !usableModels.length && (
                 <Alert
                     className='cvat-box-assist-row'
                     type='warning'
                     showIcon
-                    message='No models found. Put a .pt or .onnx file in the Box Assist models folder.'
+                    message={models.length ?
+                        'None of the model files found on the server can suggest boxes. Use a YOLO .pt or .onnx model.' :
+                        'No model files found on the server. Add a YOLO .pt or .onnx model.'}
                 />
             )}
             {selectedModel && (
                 <Row>
                     <Col span={24}>
+                        <Text type='secondary' className='cvat-box-assist-model-path'>
+                            {selectedModel.path}
+                        </Text>
                         <CVATTooltip title={selectedModel.labels.join(', ')}>
                             <Text type='secondary' className='cvat-box-assist-model-labels'>
                                 {selectedModel.labels.length > MAX_LISTED_CLASSES ?

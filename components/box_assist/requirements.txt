@@ -2,3 +2,7 @@ fastapi~=0.115
 uvicorn[standard]~=0.32
 ultralytics~=8.3
 pillow>=10
+# reading the metadata of ONNX models, and running them
+onnx>=1.16
+onnxruntime-gpu>=1.20; sys_platform == "linux"
+onnxruntime>=1.20; sys_platform != "linux"

@@ -12,7 +12,13 @@ import { getCore } from 'cvat-core-wrapper';
 export interface BoxAssistModel {
     id: string;
     name: string;
+    // where the file is on the server machine
+    path: string;
+    task: string;
     labels: string[];
+    // only usable models can suggest boxes; the others are listed with the reason
+    usable: boolean;
+    reason: string;
 }
 
 export interface BoxAssistSettings {
@@ -25,6 +31,8 @@ export interface BoxAssistSettings {
 export interface BoxAssistState extends BoxAssistSettings {
     models: BoxAssistModel[] | null;
     modelsFetching: boolean;
+    // the server is still checking the model files it found
+    modelsScanning: boolean;
     modelsError: string | null;
     // incremented to ask the overlay to (re)run the model on the current frame
     predictRequest: number;
@@ -64,6 +72,7 @@ let state: BoxAssistState = {
     ...loadSettings(),
     models: null,
     modelsFetching: false,
+    modelsScanning: false,
     modelsError: null,
     predictRequest: 0,
 };
@@ -96,23 +105,43 @@ function errorToString(error: unknown): string {
     return error instanceof Error ? error.message : String(error);
 }
 
-export async function fetchBoxAssistModels(): Promise<void> {
+const SCAN_POLL_INTERVAL_MS = 3000;
+let scanPollTimeout: ReturnType<typeof setTimeout> | null = null;
+
+// refresh: ask the server to search the model directories again
+export async function fetchBoxAssistModels(refresh = false): Promise<void> {
     if (state.modelsFetching) {
         return;
+    }
+
+    if (scanPollTimeout) {
+        clearTimeout(scanPollTimeout);
+        scanPollTimeout = null;
     }
 
     updateBoxAssistState({ modelsFetching: true, modelsError: null });
     try {
         const core = getCore();
-        const response = await core.server.request(`${core.config.backendAPI}/box_assist/models`, {
+        const url = `${core.config.backendAPI}/box_assist/models${refresh ? '?refresh=true' : ''}`;
+        const response = await core.server.request(url, {
             method: 'GET',
-        }) as { data: BoxAssistModel[] };
-        const models = response.data;
-        const modelId = models.some((model) => model.id === state.modelId) ?
-            state.modelId : (models[0]?.id ?? null);
-        updateBoxAssistState({ models, modelId, modelsFetching: false });
+        }) as { data: { scanning: boolean; models: BoxAssistModel[] } };
+        const { models, scanning } = response.data;
+        const usable = models.filter((model) => model.usable);
+        const modelId = usable.some((model) => model.id === state.modelId) ?
+            state.modelId : (usable[0]?.id ?? null);
+        updateBoxAssistState({
+            models, modelId, modelsFetching: false, modelsScanning: scanning,
+        });
+
+        if (scanning) {
+            // the list fills up while the server checks the files
+            scanPollTimeout = setTimeout(() => fetchBoxAssistModels(), SCAN_POLL_INTERVAL_MS);
+        }
     } catch (error: unknown) {
-        updateBoxAssistState({ models: null, modelsFetching: false, modelsError: errorToString(error) });
+        updateBoxAssistState({
+            models: null, modelsFetching: false, modelsScanning: false, modelsError: errorToString(error),
+        });
     }
 }
 

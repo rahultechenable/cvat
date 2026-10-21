@@ -39,6 +39,33 @@
     .cvat-box-assist-model-labels {
         font-size: 12px;
     }
+
+    .cvat-box-assist-model-path {
+        display: block;
+        font-size: 12px;
+        word-break: break-all;
+        margin-top: 2px;
+    }
+}
+
+.cvat-box-assist-model-select-dropdown {
+    .cvat-box-assist-model-option {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.35;
+        padding: 2px 0;
+        white-space: normal;
+    }
+
+    .cvat-box-assist-model-option-path {
+        font-size: 12px;
+        word-break: break-all;
+    }
+
+    .cvat-box-assist-model-option-reason {
+        font-size: 12px;
+        font-style: italic;
+    }
 }
 
 .cvat-box-assist-bar {

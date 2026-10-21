@@ -9,7 +9,8 @@ from urllib.parse import quote
 
 import requests
 from django.conf import settings
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import APIException, ValidationError
@@ -22,7 +23,7 @@ from cvat.utils.http import make_requests_session
 
 from .permissions import BoxAssistPermission
 from .serializers import (
-    BoxAssistModelSerializer,
+    BoxAssistModelListSerializer,
     BoxAssistSuggestRequestSerializer,
     BoxAssistSuggestResponseSerializer,
 )
@@ -54,7 +55,7 @@ def _call_service(method: str, path: str, **kwargs) -> dict | list:
             detail = response.text
 
         error = BoxAssistServiceError(f"Box Assist service error: {detail}")
-        if response.status_code == status.HTTP_404_NOT_FOUND:
+        if response.status_code in (status.HTTP_400_BAD_REQUEST, status.HTTP_404_NOT_FOUND):
             error = ValidationError({"model": detail})
         raise error
 
@@ -87,12 +88,21 @@ class BoxAssistViewSet(viewsets.ViewSet):
 
     @extend_schema(
         summary="List the models available for Box Assist",
-        responses={"200": BoxAssistModelSerializer(many=True)},
+        parameters=[
+            OpenApiParameter(
+                "refresh",
+                type=OpenApiTypes.BOOL,
+                description="Search the model directories again",
+                required=False,
+            )
+        ],
+        responses={"200": BoxAssistModelListSerializer},
     )
     @action(detail=False, methods=["GET"])
     def models(self, request):
-        models = _call_service("GET", "/models")
-        return Response(BoxAssistModelSerializer(models, many=True).data)
+        refresh = request.query_params.get("refresh", "").lower() in ("1", "true")
+        result = _call_service("GET", "/models", params={"refresh": "true"} if refresh else None)
+        return Response(BoxAssistModelListSerializer(result).data)
 
     @extend_schema(
         summary="Get box suggestions for a job frame",

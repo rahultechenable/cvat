@@ -12,9 +12,17 @@ cvat-ui (Box Assist control + suggestion layer)
 
 ## Models
 
-Every `.pt` / `.onnx` [Ultralytics](https://docs.ultralytics.com) detection model in the models
-directory is offered in the UI (`models/` here, or `BOX_ASSIST_MODELS_DIR`). The model id is the
-file name without the extension. Replacing a file reloads it on the next request.
+The service lists every model file (`.pt`, `.pth`, `.onnx`, `.engine`, `.torchscript`) in the
+models directory (`models/` here, or `BOX_ASSIST_MODELS_DIR`) and in the extra directories named in
+`BOX_ASSIST_SCAN_DIRS` (separated by `:`), searched recursively. Python environments, caches and
+`node_modules` are skipped. Each file is checked in the background, and the results are cached in
+`BOX_ASSIST_CACHE_FILE`, so restarts are quick. The list is searched again every
+`BOX_ASSIST_RESCAN_INTERVAL` seconds (600 by default) and when the reload button is pressed.
+
+Only [Ultralytics](https://docs.ultralytics.com) YOLO models that output boxes (detection,
+segmentation or pose) in `.pt` or `.onnx` format can suggest boxes. The others are listed as
+unusable, with the reason (for example, `.pth` files hold only weights without the model code,
+and TensorRT `.engine` files only run on the GPU they were built for).
 
 The model's class names are matched to the job's labels by name (case-insensitive, `_`, `-` and
 spaces are equivalent). Only labels of type *rectangle* or *any* are used. Classes that have no

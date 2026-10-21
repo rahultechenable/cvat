@@ -7,6 +7,15 @@
 #
 # For GPU inference, also add docker-compose.box_assist.gpu.yml.
 #
+# To list models from other places on the machine, mount them read-only and name them in
+# BOX_ASSIST_SCAN_DIRS, e.g. in an override file:
+#   cvat_box_assist:
+#     environment:
+#       BOX_ASSIST_SCAN_DIRS: /host/home
+#       BOX_ASSIST_HOST_ROOT: /host
+#     volumes:
+#       - /home:/host/home:ro
+#
 
 services:
   cvat_box_assist:
@@ -15,11 +24,17 @@ services:
     build:
       context: components/box_assist
     restart: always
+    environment:
+      BOX_ASSIST_CACHE_FILE: /cache/box_assist.json
     volumes:
       - ${CVAT_BOX_ASSIST_MODELS_DIR:-./components/box_assist/models}:/models:ro
+      - cvat_box_assist_cache:/cache
     networks:
       - cvat
 
   cvat_server:
     environment:
       CVAT_BOX_ASSIST_URL: http://cvat_box_assist:8765
+
+volumes:
+  cvat_box_assist_cache:
