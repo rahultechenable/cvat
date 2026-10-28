@@ -90,3 +90,20 @@
 .cvat-job-item-annotate {
     margin-top: $grid-unit-size;
 }
+
+.cvat-job-item-progress {
+    display: flex;
+    align-items: center;
+    gap: $grid-unit-size * 2;
+    margin-top: $grid-unit-size * 1.5;
+
+    .ant-progress {
+        flex: 1;
+        margin: 0;
+    }
+
+    .cvat-job-item-progress-text {
+        white-space: nowrap;
+        font-size: 12px;
+    }
+}

@@ -31,6 +31,7 @@ import { CombinedState } from 'reducers';
 import CVATTag, { TagType } from 'components/common/cvat-tag';
 import JobActionsComponent from 'components/jobs-page/actions-menu';
 import { JobStageSelector, JobStateSelector } from './job-selectors';
+import { JobProgressBar, JobResumeButton, useJobAnnotationProgress } from './job-progress';
 
 function formatDate(value: Dayjs): string {
     return value.format('MMM Do YYYY HH:mm');
@@ -133,6 +134,7 @@ function JobItem(props: Readonly<Props>): JSX.Element {
     const audioJobRange = isAudioTask ?
         `${formatTimeShort(job.startFrame / 1000)} – ${formatTimeShort(job.stopFrame / 1000)}` : '';
     const jobName = `Job #${job.id}`;
+    const progress = useJobAnnotationProgress(job);
 
     let tag = null;
     if (job.type === JobType.GROUND_TRUTH) {
@@ -192,7 +194,7 @@ function JobItem(props: Readonly<Props>): JSX.Element {
                             <Text type='secondary'>{`${formatDate(updated)}`}</Text>
                         </Col>
                     </Row>
-                    <Row className='cvat-job-item-annotate'>
+                    <Row className='cvat-job-item-annotate' gutter={[8, 4]}>
                         <Col>
                             <Link to={`/tasks/${job.taskId}/jobs/${job.id}`}>
                                 <Button type='primary' size='small' icon={<EditOutlined />}>
@@ -200,6 +202,11 @@ function JobItem(props: Readonly<Props>): JSX.Element {
                                 </Button>
                             </Link>
                         </Col>
+                        {!isAudioTask && (
+                            <Col>
+                                <JobResumeButton job={job} progress={progress} />
+                            </Col>
+                        )}
                     </Row>
                 </Col>
                 <Col span={12}>
@@ -291,6 +298,7 @@ function JobItem(props: Readonly<Props>): JSX.Element {
                     </Row>
                 </Col>
             </Row>
+            {!isAudioTask && <JobProgressBar progress={progress} />}
             <div
                 onClick={handleContextMenuClick}
                 className='cvat-job-item-more-button cvat-actions-menu-button'

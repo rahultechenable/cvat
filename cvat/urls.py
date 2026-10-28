@@ -61,3 +61,6 @@ if apps.is_installed("cvat.apps.growth"):
 
 if apps.is_installed("cvat.apps.box_assist"):
     urlpatterns.append(path("api/", include("cvat.apps.box_assist.urls")))
+
+if apps.is_installed("cvat.apps.annotation_progress"):
+    urlpatterns.append(path("api/", include("cvat.apps.annotation_progress.urls")))

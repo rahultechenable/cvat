@@ -149,6 +149,7 @@ INSTALLED_APPS = [
     "cvat.apps.access_tokens",
     "cvat.apps.growth",
     "cvat.apps.box_assist",
+    "cvat.apps.annotation_progress",
 ]
 
 AUTH_USER_MODEL = "iam.User"
